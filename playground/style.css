@@ -1,0 +1,39 @@
+thead, tfoot {
+    font-weight: bold;
+    border: 1px solid black;
+}
+tbody td {
+    border: none;
+}
+tbody tr:nth-child(even) {
+    background-color: #7ab4da;
+}
+tbody tr:nth-child(odd) {
+    background-color: #b5f8ff;
+}
+tbody tr:hover {
+    background-color: #f0a9f0;
+}
+caption {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+form {
+    display: grid;
+    gap: 1rem;
+}
+@media (min-width: 1025px) {
+    form {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+@media (min-width: 600px) and (max-width: 1024px) {
+    form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 599px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+}
