@@ -10,28 +10,61 @@ document.getElementById("weather-form").addEventListener("submit", async functio
         resultsDiv.textContent = "Zadejte 1 až 3 města oddělená čárkou nebo středníkem.";
         return;
     }
-
-    for (const city of cities) {
-        try {
-            const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`);
+    const geoResults = await Promise.allSettled(
+        cities.map(async (city) => {
+            const geoResponse = await fetch(
+                `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`
+            );
+            if (!geoResponse.ok) {
+                throw new Error(`Chyba při načítání souřadnic pro "${city}"`);
+            }
             const geoData = await geoResponse.json();
 
             if (!geoData.results || geoData.results.length === 0) {
-                resultsDiv.innerHTML += `<p>Město "${city}" nebylo nalezeno.</p>`;
-                continue;
+                throw new Error(`Město "${city}" nebylo nalezeno.`);
             }
 
-            const { latitude, longitude } = geoData.results[0];
+            return {
+                city,
+                latitude: geoData.results[0].latitude,
+                longitude: geoData.results[0].longitude
+            };
+        })
+    );
+    const coordsOk = geoResults
+        .filter(r => r.status === "fulfilled")
+        .map(r => r.value);
 
-            const weatherResponse = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_min,temperature_2m_max&timezone=auto`);
+    const weatherResults = await Promise.allSettled(
+        coordsOk.map(async ({ city, latitude, longitude }) => {
+            const weatherResponse = await fetch(
+                `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_min,temperature_2m_max&timezone=auto`
+            );
+            if (!weatherResponse.ok) {
+                throw new Error(`Chyba při načítání předpovědi pro "${city}"`);
+            }
             const weatherData = await weatherResponse.json();
 
-            const min = weatherData.daily.temperature_2m_min[0];
-            const max = weatherData.daily.temperature_2m_max[0];
+            return {
+                city,
+                min: weatherData.daily.temperature_2m_min[0],
+                max: weatherData.daily.temperature_2m_max[0]
+            };
+        })
+    );
 
-            resultsDiv.innerHTML += `<p><strong>${city}:</strong> Min: ${min}°C, Max: ${max}°C</p>`;
-        } catch (error) {
-            resultsDiv.innerHTML += `<p>Chyba při načítání dat pro "${city}".</p>`;
+    geoResults.forEach((res, i) => {
+        if (res.status === "rejected") {
+            resultsDiv.innerHTML += `<p>${res.reason.message}</p>`;
         }
-    }
+    });
+
+    weatherResults.forEach(res => {
+        if (res.status === "fulfilled") {
+            const { city, min, max } = res.value;
+            resultsDiv.innerHTML += `<p><strong>${city}:</strong> Min: ${min}°C, Max: ${max}°C</p>`;
+        } else {
+            resultsDiv.innerHTML += `<p>Chyba při načítání předpovědi pro město.</p>`;
+        }
+    });
 });
