@@ -1,34 +1,34 @@
-import React from "react";
-import Event, { EventProps } from "./components/event";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import EventsList from "./events/eventslist";
+import EventDetail from "./eventsid/eventdetail";
+import NewEvent from "./eventsnew/newevent";
 
-const testEvent: EventProps = {
-    id: "1",
-    title: "Schůzka vývojového týmu",
-    location: "Praha",
-    dates: [
-        {
-            timestamp: new Date("2025-08-30").getTime(),
-            records: [
-                { name: "Kate", answer: "yes" },
-                { name: "Jan", answer: "no" },
-            ],
-        },
-        {
-            timestamp: new Date("2025-09-01").getTime(),
-            records: [
-                { name: "Kate", answer: "if-needed" },
-                { name: "Jan", answer: "yes" },
-            ],
-        },
-    ],
-};
+// Příklad dat
+const data = [
+    {
+        title: "Tým building",
+        id: "1",
+        location: "Praha",
+        dates: [
+            { timestamp: 1726514405258, records: [{ name: "Honza", answer: "yes" }, { name: "Jana", answer: "no" }] },
+            { timestamp: 1726600861177, records: [{ name: "Jana", answer: "no" }] },
+        ],
+    },
+];
 
 function App() {
     return (
-        <div>
-            <h1>Ukázka komponenty Event</h1>
-            <Event {...testEvent} />
-        </div>
+        <Router>
+            <nav>
+                <Link to="/events">Seznam událostí</Link> | <Link to="/events/new">Nová událost</Link>
+            </nav>
+
+            <Routes>
+                <Route path="/events" element={<EventsList data={data} />} />
+                <Route path="/events/:id" element={<EventDetail />} />
+                <Route path="/events/new" element={<NewEvent />} />
+            </Routes>
+        </Router>
     );
 }
 
