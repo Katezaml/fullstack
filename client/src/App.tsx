@@ -1,5 +1,5 @@
 import React from "react";
-import Event, { EventProps } from "./components/Event";
+import Event, { EventProps } from "./components/event";
 
 const testEvent: EventProps = {
     id: "1",
