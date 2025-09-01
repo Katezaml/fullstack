@@ -1,7 +1,7 @@
 // src/components/Event.test.tsx
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Event, { EventProps } from "./Event";
+import Event, { type EventProps } from "./event";
 
 describe("Event component", () => {
     const baseProps: EventProps = {

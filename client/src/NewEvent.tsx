@@ -8,10 +8,12 @@ const NewEvent: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const payload = {
-            name: "Team building",
+            name: title,
             location,
-            title,
-            dates: dates.map((d) => new Date(d).getTime()),
+            dates: dates
+                .map((d) => new Date(d))
+                .filter((d) => !isNaN(d.getTime()))
+                .map((d) => d.getTime()),
         };
 
         fetch("/api/events", {
