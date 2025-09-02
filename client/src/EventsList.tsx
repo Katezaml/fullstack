@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { PollingEvent, EventsListProps } from "./types.ts";
+import { type EventsListProps } from "./types.ts";
 
 const EventsList: React.FC<EventsListProps> = ({ data }) => {
     return (
