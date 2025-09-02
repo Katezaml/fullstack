@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import EventsList from "./EventsList";
 import EventDetail from "./EventDetail";
 import NewEvent from "./NewEvent";
-import { type PollingEvent } from "./types";
-
+import { type PollingEvent } from "./types
 const data: PollingEvent[] = [
     {
         title: "Tým building",
