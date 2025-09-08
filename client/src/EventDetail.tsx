@@ -1,21 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { type PollingEvent } from "./types.ts";
-
-type EventDetailProps = {
-    event: PollingEvent;
-};
+import { useParams } from "react-router-dom";
+import { EventsApi, Event } from "../api-client";
 
 type Weather = {
     temperature: number;
     description?: string;
 };
 
-const EventDetail: React.FC<EventDetailProps> = ({ event }) => {
+const EventDetail: React.FC = () => {
+    const { id } = useParams<{ id: string }>();
+    const [event, setEvent] = useState<Event | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [weather, setWeather] = useState<Weather | null>(null);
 
     useEffect(() => {
-        if (event.location) {
-            // jednoduché volání na Open-Meteo API (příklad)
+        if (!id) return;
+
+        const api = new EventsApi();
+
+        api.getEventById({ id: parseInt(id) }) // volání generovaného klienta
+            .then((res) => {
+                setEvent(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError("Nepodařilo se načíst událost");
+                setLoading(false);
+            });
+    }, [id]);
+
+    // Načítání počasí zůstává fetch, protože je externí API
+    useEffect(() => {
+        if (event?.location) {
             fetch(
                 `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
                     event.location
@@ -43,7 +61,11 @@ const EventDetail: React.FC<EventDetailProps> = ({ event }) => {
                     setWeather(null);
                 });
         }
-    }, [event.location]);
+    }, [event?.location]);
+
+    if (loading) return <p>Načítám událost...</p>;
+    if (error) return <p>{error}</p>;
+    if (!event) return <p>Událost nenalezena</p>;
 
     return (
         <div>

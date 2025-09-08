@@ -1,29 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import EventsList from "./EventsList";
+import EventsContainer from "./EventsContainer"; // nový container
 import EventDetail from "./EventDetail";
 import NewEvent from "./NewEvent";
-import { type PollingEvent } from "./types
-const data: PollingEvent[] = [
-    {
-        title: "Tým building",
-        id: "1",
-        location: "Praha",
-        dates: [
-            {
-                timestamp: 1726514405258,
-                records: [
-                    { name: "Honza", answer: "yes" },
-                    { name: "Jana", answer: "no" },
-                ],
-            },
-            {
-                timestamp: 1726600861177,
-                records: [{ name: "Jana", answer: "no" }],
-            },
-        ],
-    },
-];
 
 function App() {
     return (
@@ -33,8 +12,8 @@ function App() {
                 <Link to="/events/new">Nová událost</Link>
             </nav>
             <Routes>
-                <Route path="/events" element={<EventsList data={data} />} />
-                <Route path="/events/:id" element={<EventDetail event={data[0]} />} />
+                <Route path="/events" element={<EventsContainer />} />
+                <Route path="/events/:id" element={<EventDetail event={null as any} />} />
                 <Route path="/events/new" element={<NewEvent />} />
             </Routes>
         </Router>

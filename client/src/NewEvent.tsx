@@ -1,28 +1,31 @@
 import React, { useState } from "react";
+import { EventsApi, EventInput } from "../api-client"; // import klienta a typů
 
 const NewEvent: React.FC = () => {
     const [title, setTitle] = useState("");
     const [location, setLocation] = useState("");
     const [dates, setDates] = useState<string[]>([""]);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const payload = {
-            name: title,
+
+        const payload: EventInput = {
+            title,
             location,
             dates: dates
                 .map((d) => new Date(d))
                 .filter((d) => !isNaN(d.getTime()))
-                .map((d) => d.getTime()),
+                .map((d) => ({ timestamp: d.getTime(), records: [] })),
         };
 
-        fetch("/api/events", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-        }).then(() => {
+        try {
+            const api = new EventsApi();
+            await api.createEvent({ eventInput: payload });
             alert("Událost odeslána!");
-        });
+        } catch (error) {
+            console.error(error);
+            alert("Chyba při odesílání události");
+        }
     };
 
     const handleDateChange = (index: number, value: string) => {
