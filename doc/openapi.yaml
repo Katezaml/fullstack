@@ -30,6 +30,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid input – missing required field "title"
   /api/events/{id}:
     get:
       summary: Get event by ID
@@ -73,7 +75,7 @@ components:
             $ref: '#/components/schemas/DateRecord'
     EventInput:
       type: object
-      required: [title, location]
+      required: [title]
       properties:
         title:
           type: string
@@ -99,4 +101,4 @@ components:
           type: string
         answer:
           type: string
-          enum: [yes, no]
+          enum: [yes, no, if-needed]

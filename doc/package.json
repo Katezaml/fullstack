@@ -2,8 +2,11 @@
   "name": "doc",
   "version": "1.0.0",
   "devDependencies": {
-    "redoc-cli": "^0.13.0",
+    "@openapitools/openapi-generator-cli": "^2.4.26",
     "openapi-typescript": "^7.9.1",
-    "@openapitools/openapi-generator-cli": "^2.4.26"
+    "redoc-cli": "^0.13.0"
+  },
+  "dependencies": {
+    "openapi-fetch": "^0.14.0"
   }
 }
