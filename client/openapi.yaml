@@ -60,22 +60,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Event'
+      required: [items]
+
     Event:
       type: object
       properties:
         id:
           type: integer
-        location:
-          type: string
         title:
+          type: string
+        location:
           type: string
         dates:
           type: array
           items:
             $ref: '#/components/schemas/DateRecord'
+      required: [id, title, dates]
+
     EventInput:
       type: object
-      required: [title]
       properties:
         title:
           type: string
@@ -85,6 +88,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DateRecord'
+      required: [title, dates]
+
     DateRecord:
       type: object
       properties:
@@ -94,6 +99,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Answer'
+      required: [timestamp, records]
+
     Answer:
       type: object
       properties:
@@ -102,3 +109,4 @@ components:
         answer:
           type: string
           enum: [yes, no, if-needed]
+      required: [name, answer]

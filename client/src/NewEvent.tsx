@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EventsApi, EventInput } from "../api-client"; // import klienta a typů
+import { createEvent, EventInput } from "../api";
 
 const NewEvent: React.FC = () => {
     const [title, setTitle] = useState("");
@@ -13,17 +13,19 @@ const NewEvent: React.FC = () => {
             title,
             location,
             dates: dates
-                .map((d) => new Date(d))
-                .filter((d) => !isNaN(d.getTime()))
-                .map((d) => ({ timestamp: d.getTime(), records: [] })),
+                .map(d => new Date(d))
+                .filter(d => !isNaN(d.getTime()))
+                .map(d => ({ timestamp: d.getTime(), records: [] })),
         };
 
         try {
-            const api = new EventsApi();
-            await api.createEvent({ eventInput: payload });
+            await createEvent(payload);
             alert("Událost odeslána!");
-        } catch (error) {
-            console.error(error);
+            setTitle("");
+            setLocation("");
+            setDates([""]);
+        } catch (err) {
+            console.error(err);
             alert("Chyba při odesílání události");
         }
     };
@@ -35,39 +37,21 @@ const NewEvent: React.FC = () => {
     };
 
     const addDate = () => {
-        if (dates.length < 10) {
-            setDates([...dates, ""]);
-        }
+        if (dates.length < 10) setDates([...dates, ""]);
     };
 
     return (
         <div>
             <h2>Nová událost</h2>
             <form onSubmit={handleSubmit}>
-                <input
-                    placeholder="Název"
-                    value={title}
-                    required
-                    onChange={(e) => setTitle(e.target.value)}
-                />
-                <input
-                    placeholder="Místo"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                />
+                <input placeholder="Název" value={title} required onChange={e => setTitle(e.target.value)} />
+                <input placeholder="Místo" value={location} onChange={e => setLocation(e.target.value)} />
 
                 {dates.map((date, i) => (
-                    <input
-                        key={i}
-                        type="date"
-                        value={date}
-                        onChange={(e) => handleDateChange(i, e.target.value)}
-                    />
+                    <input key={i} type="date" value={date} onChange={e => handleDateChange(i, e.target.value)} />
                 ))}
 
-                <button type="button" onClick={addDate}>
-                    Přidat datum
-                </button>
+                <button type="button" onClick={addDate}>Přidat datum</button>
                 <button type="submit">Vytvořit</button>
             </form>
         </div>
