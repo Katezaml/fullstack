@@ -1,0 +1,112 @@
+openapi: 3.0.3
+info:
+  title: Events API
+  version: 1.0.0
+servers:
+  - url: http://localhost:4000
+paths:
+  /api/events:
+    get:
+      summary: Get list of events
+      responses:
+        '200':
+          description: List of events
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsResponse'
+    post:
+      summary: Create a new event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventInput'
+      responses:
+        '201':
+          description: Event created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Invalid input – missing required field "title"
+  /api/events/{id}:
+    get:
+      summary: Get event by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Event detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '404':
+          description: Event not found
+
+components:
+  schemas:
+    EventsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+      required: [items]
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        location:
+          type: string
+        dates:
+          type: array
+          items:
+            $ref: '#/components/schemas/DateRecord'
+      required: [id, title, dates]
+
+    EventInput:
+      type: object
+      properties:
+        title:
+          type: string
+        location:
+          type: string
+        dates:
+          type: array
+          items:
+            $ref: '#/components/schemas/DateRecord'
+      required: [title, dates]
+
+    DateRecord:
+      type: object
+      properties:
+        timestamp:
+          type: integer
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+      required: [timestamp, records]
+
+    Answer:
+      type: object
+      properties:
+        name:
+          type: string
+        answer:
+          type: string
+          enum: [yes, no, if-needed]
+      required: [name, answer]
